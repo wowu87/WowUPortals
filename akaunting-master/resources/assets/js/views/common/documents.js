@@ -100,15 +100,17 @@ const app = new Vue({
         this.currency_symbol.rate = this.form.currency_rate;
 
         if (company_currency_code) {
-           let default_currency_symbol = null;
+            let default_currency_symbol = null;
+            let default_currency = this.currency_symbol;
 
-           for (let symbol of this.currencies) {
-               if (symbol.code == company_currency_code) {
-                   default_currency_symbol = symbol.symbol;
-               }
-           }
+            for (let currency of this.currencies) {
+                if (currency.code == company_currency_code) {
+                    default_currency = currency;
+                    default_currency_symbol = currency.symbol;
+                }
+            }
 
-           this.currency_symbol.symbol = default_currency_symbol;
+            this.currency_symbol = default_currency;
         };
 
         if (document_app_env == 'production') {
@@ -124,7 +126,7 @@ const app = new Vue({
 
             let amount = parseFloat(this.form.amount).toFixed(precision);
             let paid_amount = parseFloat(this.form.paid_amount).toFixed(precision);
-            let total_amount = parseFloat(this.form.document_default_amount - paid_amount).toFixed(precision);
+            let total_amount = parseFloat(this.form.document_default_amount).toFixed(precision);
             let error_amount = 0;
 
             if (this.form.document_currency_code != code) {
@@ -159,14 +161,12 @@ const app = new Vue({
                 return;
             }
 
-            this.form.error_amount = 0;
-
             let code = this.form.currency_code;
             let rate = this.form.currency_rate;
             let precision = this.currency.precision;
 
             let paid_amount = parseFloat(this.form.paid_amount).toFixed(precision);
-            let total_amount = parseFloat(this.form.document_default_amount - paid_amount).toFixed(precision);
+            let total_amount = parseFloat(this.form.document_default_amount).toFixed(precision);
             let error_amount = 0;
 
             if (this.form.document_currency_code != code) {
@@ -185,15 +185,12 @@ const app = new Vue({
                 }
 
                 this.form.default_amount = amount;
-
-                if (error_amount) {
-                    this.form.error_amount = error_amount;
-                    //this.form.error_amount = new Money(this.form.currency_code, error_amount, true).format();
-                }
             }
         },
 
         onChangeRatePayment(event) {
+            debugger;
+
             this.$forceUpdate();
 
             this.form.currency_rate = event.target.value;
@@ -223,7 +220,7 @@ const app = new Vue({
             let precision = this.currency.precision;
             let amount = parseFloat(this.form.amount).toFixed(precision);
             let paid_amount = parseFloat(this.form.paid_amount).toFixed(precision);
-            let total_amount = parseFloat(this.form.document_default_amount - paid_amount).toFixed(precision); 
+            let total_amount = parseFloat(this.form.document_default_amount).toFixed(precision); 
             let error_amount = 0;
 
             if (this.form.document_currency_code != code) {
@@ -877,7 +874,7 @@ const app = new Vue({
 
         onChangeRecurringDate() {
             let started_at = new Date(this.form.recurring_started_at);
-            let due_at = format(addDays(started_at, this.form.payment_terms), 'yyyy-MM-dd hh:mm:ss');
+            let due_at = format(addDays(started_at, this.form.payment_terms), 'yyyy-MM-dd');
 
             this.form.due_at = due_at;
         },

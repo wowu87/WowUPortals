@@ -73,7 +73,18 @@ class Transaction extends Model
      *
      * @var array
      */
-    public $sortable = ['type', 'number', 'paid_at', 'amount', 'category.name', 'account.name', 'customer.name', 'invoice.document_number'];
+    public $sortable = [
+        'paid_at',
+        'number',
+        'type',
+        'account.name',
+        'contact.name',
+        'category.name',
+        'document.document_number',
+        'amount',
+        'recurring.started_at',
+        'recurring.status',
+    ];
 
     /**
      * Clonable relationships.
@@ -349,7 +360,8 @@ class Transaction extends Model
         // Convert amount if not same currency
         if ($this->document->currency_code != $this->currency_code) {
             $to_code = $this->document->currency_code;
-            $to_rate = currency($this->document->currency_code)->getRate();
+            $to_rate = $this->document->currency_rate;
+            //$to_rate = currency($this->document->currency_code)->getRate();
 
             $amount = $this->convertBetween($amount, $this->currency_code, $this->currency_rate, $to_code, $to_rate);
         }

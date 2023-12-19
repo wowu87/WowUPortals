@@ -8,7 +8,7 @@
             <x-tabs.nav id="general">
                 {{ trans('general.general') }}
 
-                <span class="invalid-feedback block text-xs text-red whitespace-normal" v-if="form.errors.has('paid_at')||form.errors.has('amount')||form.errors.has('payment_method')||form.errors.has('account_id')">
+                <span class="invalid-feedback block text-xs text-red whitespace-normal" v-if="form.errors.has('paid_at') || form.errors.has('amount') || form.errors.has('payment_method') || form.errors.has('account_id')">
                     {{ trans('general.validation_error') }}
                 </span>
             </x-tabs.nav>
@@ -16,7 +16,7 @@
             <x-tabs.nav id="other">
                 {{ trans_choice('general.others', 1) }}
 
-                <span class="invalid-feedback block text-xs text-red whitespace-normal" v-if="form.errors.has('number')||form.errors.has('description')||form.errors.has('recurring')">
+                <span class="invalid-feedback block text-xs text-red whitespace-normal" v-if="form.errors.has('number') || form.errors.has('description') || form.errors.has('recurring')">
                     {{ trans('general.validation_error') }}
                 </span>
             </x-tabs.nav>
@@ -48,8 +48,7 @@
                         label="{{ trans('general.amount') }}"
                         value="{{ $amount }}"
                         autofocus="autofocus"
-                        :currency="$currency"
-                        dynamicCurrency="currency"
+                        :currency="! empty($transaction) ? $transaction->currency : $currency"
                         form-group-class="col-span-6"
                     />
 
@@ -60,20 +59,10 @@
                             value="{{ $amount }}"
                             v-model="form.amount"
                             autofocus="autofocus"
-                            :currency="$currency"
+                            :currency="! empty($transaction) ? $transaction->currency : $currency"
                             form-group-class="col-span-6"
                             input="onChangeAmount($event)"
                         />
-
-                        <div class="sm:col-span-6 grid sm:grid-cols-6 gap-x-4 -mt-6" v-if="form.error_amount">
-                            <div class="relative col-span-6 text-xs flex mt-5">
-                                <div class="rounded-xl px-5 py-3 bg-red-100">
-                                    <div class="w-auto text-xs mr-2 text-red-600"
-                                        v-html="'{{ trans('messages.error.over_payment', ['amount' => '#amount']) }}'.replace('#amount', form.error_amount)"
-                                    ></div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="sm:col-span-2 text-xs absolute right-0 top-1">
                             <div class="custom-control custom-checkbox">
